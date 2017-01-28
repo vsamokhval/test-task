@@ -2,6 +2,7 @@ package com.websystique.springmvc.service;
 
 import java.util.List;
 
+import com.websystique.springmvc.model.User;
 import com.websystique.springmvc.model.UserProfile;
 
 
@@ -12,5 +13,7 @@ public interface UserProfileService {
 	UserProfile findByType(String type);
 	
 	List<UserProfile> findAll();
+
+	List<UserProfile> findDependsOnUserType(User user);
 	
 }

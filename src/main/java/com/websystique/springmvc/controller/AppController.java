@@ -1,33 +1,32 @@
 package com.websystique.springmvc.controller;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import com.websystique.springmvc.model.User;
+import com.websystique.springmvc.model.UserPrincipal;
+import com.websystique.springmvc.model.UserProfile;
+import com.websystique.springmvc.service.UserProfileService;
+import com.websystique.springmvc.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.websystique.springmvc.model.User;
-import com.websystique.springmvc.model.UserProfile;
-import com.websystique.springmvc.service.UserProfileService;
-import com.websystique.springmvc.service.UserService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Locale;
 
 
 
@@ -36,31 +35,33 @@ import com.websystique.springmvc.service.UserService;
 @SessionAttributes("roles")
 public class AppController {
 
+	static final Logger logger = LoggerFactory.getLogger(AppController.class);
+
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	UserProfileService userProfileService;
-	
+
 	@Autowired
 	MessageSource messageSource;
 
 	@Autowired
 	PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
-	
+
 	@Autowired
 	AuthenticationTrustResolver authenticationTrustResolver;
-	
-	
+
+
 	/**
 	 * This method will list all existing users.
 	 */
 	@RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
 	public String listUsers(ModelMap model) {
 
-		List<User> users = userService.findAllUsers();
+		List<User> users = userService.findAllUsers(getPrincipal());
 		model.addAttribute("users", users);
-		model.addAttribute("loggedinuser", getPrincipal());
+		model.addAttribute("loggedinuser", getUsername());
 		return "userslist";
 	}
 
@@ -70,9 +71,11 @@ public class AppController {
 	@RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
 	public String newUser(ModelMap model) {
 		User user = new User();
+		List<UserProfile> roles= userProfileService.findDependsOnUserType(getPrincipal());
 		model.addAttribute("user", user);
+		model.addAttribute("roles", roles);
 		model.addAttribute("edit", false);
-		model.addAttribute("loggedinuser", getPrincipal());
+		model.addAttribute("loggedinuser", getUsername());
 		return "registration";
 	}
 
@@ -89,7 +92,7 @@ public class AppController {
 		}
 
 		/*
-		 * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique annotation 
+		 * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique annotation
 		 * and applying it on field [sso] of Model class [User].
 		 * 
 		 * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the validation
@@ -101,11 +104,12 @@ public class AppController {
 		    result.addError(ssoError);
 			return "registration";
 		}
-		
+
+		user.setCreatedBy(getPrincipal().getId());
 		userService.saveUser(user);
 
 		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " registered successfully");
-		model.addAttribute("loggedinuser", getPrincipal());
+		model.addAttribute("loggedinuser", getUsername());
 		//return "success";
 		return "registrationsuccess";
 	}
@@ -117,12 +121,14 @@ public class AppController {
 	@RequestMapping(value = { "/edit-user-{ssoId}" }, method = RequestMethod.GET)
 	public String editUser(@PathVariable String ssoId, ModelMap model) {
 		User user = userService.findBySSO(ssoId);
+		List<UserProfile> roles= userProfileService.findDependsOnUserType(getPrincipal());
 		model.addAttribute("user", user);
+		model.addAttribute("roles", roles);
 		model.addAttribute("edit", true);
-		model.addAttribute("loggedinuser", getPrincipal());
+		model.addAttribute("loggedinuser", getUsername());
 		return "registration";
 	}
-	
+
 	/**
 	 * This method will be called on form submission, handling POST request for
 	 * updating user in database. It also validates the user input
@@ -146,11 +152,11 @@ public class AppController {
 		userService.updateUser(user);
 
 		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " updated successfully");
-		model.addAttribute("loggedinuser", getPrincipal());
+		model.addAttribute("loggedinuser", getUsername());
 		return "registrationsuccess";
 	}
 
-	
+
 	/**
 	 * This method will delete an user by it's SSOID value.
 	 */
@@ -159,22 +165,14 @@ public class AppController {
 		userService.deleteUserBySSO(ssoId);
 		return "redirect:/list";
 	}
-	
 
-	/**
-	 * This method will provide UserProfile list to views
-	 */
-	@ModelAttribute("roles")
-	public List<UserProfile> initializeProfiles() {
-		return userProfileService.findAll();
-	}
-	
+
 	/**
 	 * This method handles Access-Denied redirect.
 	 */
 	@RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
 	public String accessDeniedPage(ModelMap model) {
-		model.addAttribute("loggedinuser", getPrincipal());
+		model.addAttribute("loggedinuser", getUsername());
 		return "accessDenied";
 	}
 
@@ -187,7 +185,7 @@ public class AppController {
 		if (isCurrentAuthenticationAnonymous()) {
 			return "login";
 	    } else {
-	    	return "redirect:/list";  
+	    	return "redirect:/list";
 	    }
 	}
 
@@ -198,8 +196,7 @@ public class AppController {
 	@RequestMapping(value="/logout", method = RequestMethod.GET)
 	public String logoutPage (HttpServletRequest request, HttpServletResponse response){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null){    
-			//new SecurityContextLogoutHandler().logout(request, response, auth);
+		if (auth != null){
 			persistentTokenBasedRememberMeServices.logout(request, response, auth);
 			SecurityContextHolder.getContext().setAuthentication(null);
 		}
@@ -209,18 +206,23 @@ public class AppController {
 	/**
 	 * This method returns the principal[user-name] of logged-in user.
 	 */
-	private String getPrincipal(){
-		String userName = null;
+	private User getPrincipal(){
+		User user = null;
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		if (principal instanceof UserDetails) {
-			userName = ((UserDetails)principal).getUsername();
-		} else {
-			userName = principal.toString();
+ 		if (principal instanceof UserPrincipal) {
+			user = ((UserPrincipal) principal).getUser();
 		}
-		return userName;
+
+		logger.info("user : {}", user);
+
+		return user;
 	}
-	
+
+	private String getUsername() {
+		return getPrincipal() != null ? getPrincipal().getSsoId() : "";
+	}
+
 	/**
 	 * This method returns true if users is already authenticated [logged-in], else false.
 	 */

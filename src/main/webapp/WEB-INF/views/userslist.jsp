@@ -25,7 +25,8 @@
 				        <th>Lastname</th>
 				        <th>Email</th>
 				        <th>SSO ID</th>
-				        <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+						<th>Created By</th>
+				        <sec:authorize access="hasRole('ADMIN') or hasRole('OPERATOR')">
 				        	<th width="100"></th>
 				        </sec:authorize>
 				        <sec:authorize access="hasRole('ADMIN')">
@@ -41,7 +42,8 @@
 						<td>${user.lastName}</td>
 						<td>${user.email}</td>
 						<td>${user.ssoId}</td>
-					    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+						<td>${user.createdBy}</td>
+					    <sec:authorize access="hasRole('ADMIN') or hasRole('OPERATOR')">
 							<td><a href="<c:url value='/edit-user-${user.ssoId}' />" class="btn btn-success custom-width">edit</a></td>
 				        </sec:authorize>
 				        <sec:authorize access="hasRole('ADMIN')">
@@ -52,7 +54,7 @@
 	    		</tbody>
 	    	</table>
 		</div>
-		<sec:authorize access="hasRole('ADMIN')">
+		<sec:authorize access="hasRole('ADMIN') or hasRole('OPERATOR')">
 		 	<div class="well">
 		 		<a href="<c:url value='/newuser' />">Add New User</a>
 		 	</div>

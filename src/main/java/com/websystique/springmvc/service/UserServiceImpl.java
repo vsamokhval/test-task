@@ -1,14 +1,15 @@
 package com.websystique.springmvc.service;
 
-import java.util.List;
-
+import com.websystique.springmvc.dao.UserDao;
+import com.websystique.springmvc.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.websystique.springmvc.dao.UserDao;
-import com.websystique.springmvc.model.User;
+import java.util.List;
+
+import static com.websystique.springmvc.utils.UserUtils.isAdmin;
 
 
 @Service("userService")
@@ -59,13 +60,19 @@ public class UserServiceImpl implements UserService{
 		dao.deleteBySSO(sso);
 	}
 
-	public List<User> findAllUsers() {
-		return dao.findAllUsers();
+	public List<User> findAllUsers(User user) {
+		List<User> result;
+		if (isAdmin(user)) {
+			result = dao.findAllUsers();
+		} else {
+			result = dao.findUsersByCreatorId(user.getId());
+		}
+		return result;
 	}
 
 	public boolean isUserSSOUnique(Integer id, String sso) {
 		User user = findBySSO(sso);
 		return ( user == null || ((id != null) && (user.getId() == id)));
 	}
-	
+
 }

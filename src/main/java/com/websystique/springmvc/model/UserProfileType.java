@@ -3,8 +3,8 @@ package com.websystique.springmvc.model;
 import java.io.Serializable;
 
 public enum UserProfileType implements Serializable{
-	USER("USER"),
-	DBA("DBA"),
+	PUBLISHER("PUBLISHER"),
+	OPERATOR("OPERATOR"),
 	ADMIN("ADMIN");
 	
 	String userProfileType;

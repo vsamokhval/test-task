@@ -53,6 +53,15 @@ public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
 		return users;
 	}
 
+	public List<User> findUsersByCreatorId(Integer createdBy) {
+		logger.info("createdBy: ", createdBy.toString());
+		Criteria criteria = createEntityCriteria().add(Restrictions.eq("createdBy", createdBy)).addOrder(Order.asc("firstName"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<User> users = (List<User>) criteria.list();
+
+		return users;
+	}
+
 	public void save(User user) {
 		persist(user);
 	}

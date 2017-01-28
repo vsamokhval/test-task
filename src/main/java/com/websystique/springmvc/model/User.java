@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -44,9 +45,13 @@ public class User implements Serializable{
 	@Column(name="EMAIL", nullable=false)
 	private String email;
 
+	@Column(name="CREATED_BY", nullable=true)
+	private Integer createdBy;
+
 	@NotEmpty
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_USER_PROFILE", 
+//	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinTable(name = "APP_USER_USER_PROFILE",
              joinColumns = { @JoinColumn(name = "USER_ID") }, 
              inverseJoinColumns = { @JoinColumn(name = "USER_PROFILE_ID") })
 	private Set<UserProfile> userProfiles = new HashSet<UserProfile>();
@@ -99,6 +104,14 @@ public class User implements Serializable{
 		this.email = email;
 	}
 
+	public Integer getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Integer createdBy) {
+		this.createdBy = createdBy;
+	}
+
 	public Set<UserProfile> getUserProfiles() {
 		return userProfiles;
 	}
@@ -144,7 +157,7 @@ public class User implements Serializable{
 	 */
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", ssoId=" + ssoId + ", password=" + password
+		return "User [id=" + id + ", ssoId=" + ssoId + ", password=[PROTECTED]"
 				+ ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", email=" + email + "]";
 	}
