@@ -1,8 +1,10 @@
 package test.springmvc.controller;
 
+import test.springmvc.model.RegisteredApp;
 import test.springmvc.model.User;
 import test.springmvc.model.UserPrincipal;
 import test.springmvc.model.UserProfile;
+import test.springmvc.service.RegisteredAppsService;
 import test.springmvc.service.UserProfileService;
 import test.springmvc.service.UserService;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import test.springmvc.utils.UserUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +44,9 @@ public class AppController {
 	UserService userService;
 
 	@Autowired
+	RegisteredAppsService registeredAppsService;
+
+	@Autowired
 	UserProfileService userProfileService;
 
 	@Autowired
@@ -54,15 +60,27 @@ public class AppController {
 
 
 	/**
-	 * This method will list all existing users.
+	 * This method will list users.
 	 */
-	@RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/list" }, method = RequestMethod.GET)
 	public String listUsers(ModelMap model) {
 
 		List<User> users = userService.findAllUsers(getPrincipal());
 		model.addAttribute("users", users);
 		model.addAttribute("loggedinuser", getUsername());
 		return "userslist";
+	}
+
+	/**
+	 * This method will list registered applications.
+	 */
+	@RequestMapping(value = { "/appslist" }, method = RequestMethod.GET)
+	public String listRegisteredApps(ModelMap model) {
+
+		List<RegisteredApp> registeredApps = registeredAppsService.findAllRegisteredApps(getPrincipal());
+		model.addAttribute("registeredApps", registeredApps);
+		model.addAttribute("loggedinuser", getUsername());
+		return "appslist";
 	}
 
 	/**
@@ -180,13 +198,28 @@ public class AppController {
 	 * This method handles login GET requests.
 	 * If users is already logged-in and tries to goto login page again, will be redirected to list page.
 	 */
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+//	@RequestMapping(value = "/login", method = RequestMethod.GET)
+//	public String loginPage() {
+//		if (isCurrentAuthenticationAnonymous()) {
+//			return "login";
+//		} else {
+//			logger.info("redirect to: redirect:/list");
+//			return "redirect:/list";
+//		}
+//	}
+
+	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
 	public String loginPage() {
+		logger.error(">>>>>>>>>>>> loginPage");
 		if (isCurrentAuthenticationAnonymous()) {
 			return "login";
-	    } else {
+	    } else if (UserUtils.isAdmin(getPrincipal())){
+			logger.error(">>>> REDIRECT TO: redirect:/list");
 	    	return "redirect:/list";
-	    }
+	    } else {
+			logger.error(">>> REDIRECT TO: redirect:/appslist");
+			return "redirect:/appslist";
+		}
 	}
 
 	/**

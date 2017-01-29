@@ -20,7 +20,7 @@ import test.springmvc.converter.RoleToUserProfileConverter;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.websystique.springmvc")
+@ComponentScan(basePackages = "test.springmvc")
 public class AppConfig extends WebMvcConfigurerAdapter{
 	
 	

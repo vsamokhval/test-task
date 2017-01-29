@@ -150,10 +150,6 @@ public class User implements Serializable{
 		return true;
 	}
 
-	/*
-	 * DO-NOT-INCLUDE passwords in toString function.
-	 * It is done here just for convenience purpose.
-	 */
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", ssoId=" + ssoId + ", password=[PROTECTED]"

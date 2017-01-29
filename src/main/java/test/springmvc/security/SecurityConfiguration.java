@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
+@SuppressWarnings("ALL")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -36,8 +37,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/", "/list")
-				.access("hasRole('ADMIN') or hasRole('OPERATOR')")
+		http.authorizeRequests()
+				.antMatchers("/list").access("hasRole('ADMIN') or hasRole('OPERATOR')")
+				.antMatchers("/appslist").access("hasRole('OPERATOR') or hasRole('PUBLISHER')")
 				.antMatchers("/newuser/**").access("hasRole('ADMIN') or hasRole('OPERATOR')")
 				.antMatchers("/delete-user-*").access("hasRole('ADMIN')").antMatchers("/edit-user-*")
 				.access("hasRole('ADMIN') or hasRole('OPERATOR')").and().formLogin().loginPage("/login")
