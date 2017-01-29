@@ -88,6 +88,46 @@ public class AppController {
 	/**
 	 * This method will provide the medium to add a new user.
 	 */
+	@RequestMapping(value = { "/addApp" }, method = RequestMethod.GET)
+	public String newApp(ModelMap model) {
+		RegisteredApp newApp = new RegisteredApp();
+		newApp.setAddedBy(getPrincipal().getId());
+		model.addAttribute("newApp", newApp);
+		model.addAttribute("edit", false);
+		model.addAttribute("userlist", false);
+		model.addAttribute("loggedinuser", getUsername());
+		return "addApp";
+	}
+
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * saving app in database. It also validates the app input
+	 */
+	@RequestMapping(value = { "/addApp" }, method = RequestMethod.POST)
+	public String saveApp(@Valid RegisteredApp app, BindingResult result,
+						   ModelMap model) {
+
+		if (result.hasErrors()) {
+			return "addApp";
+		}
+
+		registeredAppsService.save(app);
+
+		model.addAttribute("success", "Application " + app.getName() + " registered successfully");
+		model.addAttribute("userlist", false);
+		model.addAttribute("loggedinuser", getUsername());
+
+		return "appregistrationsuccess";
+	}
+
+
+
+
+
+
+	/**
+	 * This method will provide the medium to add a new user.
+	 */
 	@RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
 	public String newUser(ModelMap model) {
 		User user = new User();
@@ -130,6 +170,7 @@ public class AppController {
 		userService.saveUser(user);
 
 		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " registered successfully");
+		model.addAttribute("userlist", true);
 		model.addAttribute("loggedinuser", getUsername());
 		//return "success";
 		return "registrationsuccess";
@@ -174,6 +215,7 @@ public class AppController {
 		userService.updateUser(user);
 
 		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " updated successfully");
+		model.addAttribute("userlist", true);
 		model.addAttribute("loggedinuser", getUsername());
 		return "registrationsuccess";
 	}

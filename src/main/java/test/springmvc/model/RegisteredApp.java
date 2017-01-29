@@ -23,7 +23,6 @@ public class RegisteredApp {
     @Column(name="DESCRIPTION")
     private String description;
 
-    @NotEmpty
     @Column(name="ADDED_BY", nullable=false)
     private Integer addedBy;
 
@@ -80,7 +79,7 @@ public class RegisteredApp {
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
+        int result = ((id == null) ? 1 : id.hashCode());
         result = 31 * result + name.hashCode();
         return result;
     }

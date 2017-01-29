@@ -10,7 +10,7 @@ import test.springmvc.model.RegisteredApp;
 
 import java.util.List;
 
-@Repository("RegisteredAppsDao")
+@Repository("registeredAppsDao")
 public class RegisteredAppsDaoImpl extends AbstractDao<Integer, RegisteredApp> implements RegisteredAppsDao  {
 
     static final Logger logger = LoggerFactory.getLogger(RegisteredAppsDaoImpl.class);

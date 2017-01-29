@@ -4,7 +4,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
 <div class="authbar">
-	<span>Current user: <strong>${loggedinuser}</strong>.</span>
+	<span>Logged in user: <strong>${loggedinuser}</strong>.</span>
 
 	<span class="floatRight"><a href="<c:url value="/logout" />">Logout</a></span>
 

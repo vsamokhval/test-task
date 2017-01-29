@@ -52,10 +52,10 @@
 	    		</tbody>
 	    	</table>
 		</div>
-		<sec:authorize access="hasRole('PUBLISHER') or hasRole('OPERATOR')">
+		<sec:authorize access="hasRole('PUBLISHER')">
 		 	<div class="well">
-		 		<%--<a href="<c:url value='/newuser' />">Add New Application</a>--%>
-		 		<a href="javascript;">Add New Application</a>
+		 		<a href="<c:url value='/addApp' />">Add New Application</a>
+		 		<%--<a href="javascript;">Add New Application</a>--%>
 		 	</div>
 	 	</sec:authorize>
    	</div>
