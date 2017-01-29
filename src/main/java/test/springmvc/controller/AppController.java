@@ -86,7 +86,7 @@ public class AppController {
 	}
 
 	/**
-	 * This method will provide the medium to add a new user.
+	 * This method will provide the medium to add a new app.
 	 */
 	@RequestMapping(value = { "/addApp" }, method = RequestMethod.GET)
 	public String newApp(ModelMap model) {
@@ -121,9 +121,14 @@ public class AppController {
 	}
 
 
-
-
-
+	/**
+	 * This method will delete an app by it's ID value.
+	 */
+	@RequestMapping(value = { "/delete-app-{id}" }, method = RequestMethod.GET)
+	public String deleteApp(@PathVariable Integer id) {
+		registeredAppsService.deleteById(id);
+		return "redirect:/appslist";
+	}
 
 	/**
 	 * This method will provide the medium to add a new user.

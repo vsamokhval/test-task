@@ -43,6 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/addApp/**").access("hasRole('PUBLISHER')")
 				.antMatchers("/newuser/**").access("hasRole('ADMIN') or hasRole('OPERATOR')")
 				.antMatchers("/delete-user-*").access("hasRole('ADMIN')")
+				.antMatchers("/delete-app-*").access("hasRole('OPERATOR') or hasRole('PUBLISHER')")
 				.antMatchers("/edit-user-*").access("hasRole('ADMIN') or hasRole('OPERATOR')")
 				.and().formLogin().loginPage("/login")
 				.loginProcessingUrl("/login").usernameParameter("ssoId").passwordParameter("password").and()

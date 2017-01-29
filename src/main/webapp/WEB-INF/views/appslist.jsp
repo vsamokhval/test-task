@@ -24,10 +24,6 @@
 				        <th>Name</th>
 				        <th>URL</th>
 				        <th>Description</th>
-						<th>Added By</th>
-				        <sec:authorize access="hasRole('PUBLISHER') or hasRole('OPERATOR')">
-				        	<th width="100"></th>
-				        </sec:authorize>
 				        <sec:authorize access="hasRole('PUBLISHER') or hasRole('OPERATOR')">
 				        	<th width="100"></th>
 				        </sec:authorize>
@@ -38,15 +34,11 @@
 				<c:forEach items="${registeredApps}" var="app">
 					<tr>
 						<td>${app.name}</td>
-						<td>${app.url}</td>
+						<td><a target="_blank" href="<c:url value='${app.url}' />">Visit Homepage</a></td>
 						<td>${app.description}</td>
-						<td>${app.addedBy}</td>
-					    <%--<sec:authorize access="hasRole('ADMIN') or hasRole('OPERATOR')">--%>
-							<%--<td><a href="<c:url value='/edit-user-${user.ssoId}' />" class="btn btn-success custom-width">edit</a></td>--%>
-				        <%--</sec:authorize>--%>
-				        <%--<sec:authorize access="hasRole('ADMIN')">--%>
-							<%--<td><a href="<c:url value='/delete-user-${user.ssoId}' />" class="btn btn-danger custom-width">delete</a></td>--%>
-        				<%--</sec:authorize>--%>
+				        <sec:authorize access="hasRole('PUBLISHER') or hasRole('OPERATOR')">
+							<td><a href="<c:url value='/delete-app-${app.id}' />" class="btn btn-danger custom-width">delete</a></td>
+        				</sec:authorize>
 					</tr>
 				</c:forEach>
 	    		</tbody>
@@ -55,7 +47,6 @@
 		<sec:authorize access="hasRole('PUBLISHER')">
 		 	<div class="well">
 		 		<a href="<c:url value='/addApp' />">Add New Application</a>
-		 		<%--<a href="javascript;">Add New Application</a>--%>
 		 	</div>
 	 	</sec:authorize>
    	</div>
