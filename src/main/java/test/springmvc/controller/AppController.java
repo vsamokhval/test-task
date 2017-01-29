@@ -67,6 +67,7 @@ public class AppController {
 
 		List<User> users = userService.findAllUsers(getPrincipal());
 		model.addAttribute("users", users);
+		model.addAttribute("userlist", true);
 		model.addAttribute("loggedinuser", getUsername());
 		return "userslist";
 	}
@@ -79,6 +80,7 @@ public class AppController {
 
 		List<RegisteredApp> registeredApps = registeredAppsService.findAllRegisteredApps(getPrincipal());
 		model.addAttribute("registeredApps", registeredApps);
+		model.addAttribute("userlist", false);
 		model.addAttribute("loggedinuser", getUsername());
 		return "appslist";
 	}
@@ -93,6 +95,7 @@ public class AppController {
 		model.addAttribute("user", user);
 		model.addAttribute("roles", roles);
 		model.addAttribute("edit", false);
+		model.addAttribute("userlist", true);
 		model.addAttribute("loggedinuser", getUsername());
 		return "registration";
 	}
@@ -143,6 +146,7 @@ public class AppController {
 		model.addAttribute("user", user);
 		model.addAttribute("roles", roles);
 		model.addAttribute("edit", true);
+		model.addAttribute("userlist", true);
 		model.addAttribute("loggedinuser", getUsername());
 		return "registration";
 	}
@@ -198,26 +202,13 @@ public class AppController {
 	 * This method handles login GET requests.
 	 * If users is already logged-in and tries to goto login page again, will be redirected to list page.
 	 */
-//	@RequestMapping(value = "/login", method = RequestMethod.GET)
-//	public String loginPage() {
-//		if (isCurrentAuthenticationAnonymous()) {
-//			return "login";
-//		} else {
-//			logger.info("redirect to: redirect:/list");
-//			return "redirect:/list";
-//		}
-//	}
-
 	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
 	public String loginPage() {
-		logger.error(">>>>>>>>>>>> loginPage");
 		if (isCurrentAuthenticationAnonymous()) {
 			return "login";
 	    } else if (UserUtils.isAdmin(getPrincipal())){
-			logger.error(">>>> REDIRECT TO: redirect:/list");
 	    	return "redirect:/list";
 	    } else {
-			logger.error(">>> REDIRECT TO: redirect:/appslist");
 			return "redirect:/appslist";
 		}
 	}

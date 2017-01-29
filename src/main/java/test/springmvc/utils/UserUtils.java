@@ -21,7 +21,6 @@ public class UserUtils {
                 result = true;
             }
         }
-        logger.info(">>>> isAdmin: {}", result);
         return result;
     }
 
