@@ -3,34 +3,31 @@ package test.springmvc.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import test.springmvc.model.User;
 import test.springmvc.model.UserProfile;
 import test.springmvc.model.UserProfileType;
 
+@Service("userUtils")
 public class UserUtils {
 
     static final Logger logger = LoggerFactory.getLogger(UserUtils.class);
 
-    public static boolean isAdmin(User user) {
-        boolean result = false;
-        if (null == user) {
-            return result;
-        }
-        for(UserProfile userProfile : user.getUserProfiles()){
-            if (userProfile.getType().equals(UserProfileType.ADMIN.getUserProfileType())) {
-                result = true;
-            }
-        }
-        return result;
+    public boolean isAdmin(User user) {
+        return isUserHasCurrentType(user, UserProfileType.ADMIN.getUserProfileType());
     }
 
-    public static boolean isOperator(User user) {
+    public boolean isOperator(User user) {
+        return isUserHasCurrentType(user, UserProfileType.OPERATOR.getUserProfileType());
+    }
+
+    private boolean isUserHasCurrentType(User user, String type) {
         boolean result = false;
         if (null == user) {
             return result;
         }
         for(UserProfile userProfile : user.getUserProfiles()){
-            if (userProfile.getType().equals(UserProfileType.OPERATOR.getUserProfileType())) {
+            if (userProfile.getType().equals(type)) {
                 result = true;
             }
         }

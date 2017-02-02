@@ -58,6 +58,9 @@ public class AppController {
 	@Autowired
 	AuthenticationTrustResolver authenticationTrustResolver;
 
+	@Autowired
+	UserUtils userUtils;
+
 
 	/**
 	 * This method will list users.
@@ -253,7 +256,7 @@ public class AppController {
 	public String loginPage() {
 		if (isCurrentAuthenticationAnonymous()) {
 			return "login";
-	    } else if (UserUtils.isAdmin(getPrincipal())){
+	    } else if (userUtils.isAdmin(getPrincipal())){
 	    	return "redirect:/list";
 	    } else {
 			return "redirect:/appslist";

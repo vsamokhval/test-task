@@ -20,7 +20,10 @@ public class UserServiceImpl implements UserService{
 
 	@Autowired
     private PasswordEncoder passwordEncoder;
-	
+
+	@Autowired
+	private UserUtils userUtils;
+
 	public User findById(int id) {
 		return dao.findById(id);
 	}
@@ -61,7 +64,7 @@ public class UserServiceImpl implements UserService{
 
 	public List<User> findAllUsers(User user) {
 		List<User> result;
-		if (UserUtils.isAdmin(user)) {
+		if (userUtils.isAdmin(user)) {
 			result = dao.findAllUsers();
 		} else {
 			result = dao.findUsersByCreatorId(user.getId());

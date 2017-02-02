@@ -17,6 +17,9 @@ public class RegisteredAppsServiceImpl implements RegisteredAppsService{
     @Autowired
     private RegisteredAppsDao dao;
 
+    @Autowired
+    private UserUtils userUtils;
+
     @Override
     public RegisteredApp findById(int id) {
         return dao.findById(id);
@@ -35,7 +38,7 @@ public class RegisteredAppsServiceImpl implements RegisteredAppsService{
     @Override
     public List<RegisteredApp> findAllRegisteredApps(User user) {
         List<RegisteredApp> result;
-        if (UserUtils.isOperator(user)) {
+        if (userUtils.isOperator(user)) {
             result = dao.findAllRegisteredApps();
         } else {
             result = dao.findRegisteredAppsByCreatorId(user.getId());

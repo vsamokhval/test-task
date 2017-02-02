@@ -24,7 +24,10 @@ public class UserProfileServiceImpl implements UserProfileService{
 	
 	@Autowired
     UserProfileDao dao;
-	
+
+	@Autowired
+	private UserUtils userUtils;
+
 	public UserProfile findById(int id) {
 		return dao.findById(id);
 	}
@@ -40,9 +43,9 @@ public class UserProfileServiceImpl implements UserProfileService{
 	public List<UserProfile> findDependsOnUserType(User user) {
 		List<UserProfile> result;
 
-		logger.info("isAdmin: ", UserUtils.isAdmin(user));
+		logger.info("isAdmin: {}", userUtils.isAdmin(user));
 
-		if (UserUtils.isAdmin(user)) {
+		if (userUtils.isAdmin(user)) {
 			result = this.findAll();
 		} else {
 			UserProfile userProfile = this.findByType(UserProfileType.PUBLISHER.getUserProfileType());

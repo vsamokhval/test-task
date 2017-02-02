@@ -73,8 +73,13 @@ public class RegisteredApp {
 
         RegisteredApp that = (RegisteredApp) o;
 
-        if (!id.equals(that.id)) return false;
-        return name.equals(that.name);
+        if (id == null) {
+            if (that.id != null)
+                return false;
+        } else if (!id.equals(that.id))
+            return false;
+
+        return addedBy.equals(that.addedBy);
     }
 
     @Override
