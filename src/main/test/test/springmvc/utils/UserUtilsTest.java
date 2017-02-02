@@ -24,7 +24,7 @@ public class UserUtilsTest {
     }
 
     @Test
-    public void isAdmin() {
+    public void isAdminSuccess() {
         User user = new User();
         Set<UserProfile> userProfiles = getUserProfilesByType(UserProfileType.ADMIN.getUserProfileType());
         user.setUserProfiles(userProfiles);
@@ -32,11 +32,28 @@ public class UserUtilsTest {
     }
 
     @Test
-    public void isOperator() {
+    public void isAdminFalse() {
+        User user = new User();
+        Set<UserProfile> userProfiles = getUserProfilesByType(UserProfileType.OPERATOR.getUserProfileType());
+        user.setUserProfiles(userProfiles);
+        Assert.assertFalse(userUtils.isAdmin(user));
+    }
+
+    @Test
+    public void isOperatorSuccess() {
         User user = new User();
         Set<UserProfile> userProfiles = getUserProfilesByType(UserProfileType.OPERATOR.getUserProfileType());
         user.setUserProfiles(userProfiles);
         Assert.assertTrue(userUtils.isOperator(user));
+    }
+
+
+    @Test
+    public void isOperatorFalse() {
+        User user = new User();
+        Set<UserProfile> userProfiles = getUserProfilesByType(UserProfileType.PUBLISHER.getUserProfileType());
+        user.setUserProfiles(userProfiles);
+        Assert.assertFalse(userUtils.isOperator(user));
     }
 
     private Set<UserProfile> getUserProfilesByType(String type) {
