@@ -29,8 +29,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	public User findBySSO(String sso) {
-		User user = dao.findBySSO(sso);
-		return user;
+		return dao.findBySSO(sso);
 	}
 
 	public void saveUser(User user) {

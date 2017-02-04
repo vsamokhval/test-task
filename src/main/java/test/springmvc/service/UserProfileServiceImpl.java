@@ -20,8 +20,6 @@ import test.springmvc.utils.UserUtils;
 @Transactional
 public class UserProfileServiceImpl implements UserProfileService{
 
-	static final Logger logger = LoggerFactory.getLogger(UserProfileServiceImpl.class);
-	
 	@Autowired
     UserProfileDao dao;
 
@@ -43,12 +41,10 @@ public class UserProfileServiceImpl implements UserProfileService{
 	public List<UserProfile> findDependsOnUserType(User user) {
 		List<UserProfile> result;
 
-		logger.info("isAdmin: {}", userUtils.isAdmin(user));
-
 		if (userUtils.isAdmin(user)) {
-			result = this.findAll();
+			result = dao.findAll();
 		} else {
-			UserProfile userProfile = this.findByType(UserProfileType.PUBLISHER.getUserProfileType());
+			UserProfile userProfile = dao.findByType(UserProfileType.PUBLISHER.getUserProfileType());
 			result = new ArrayList<UserProfile>();
 			result.add(userProfile);
 		}
